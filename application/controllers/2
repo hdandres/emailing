@@ -161,40 +161,21 @@ class Emailing extends CI_Controller {
 			if($tipo[1] == 'plain'){
 				$lineas = file($_FILES['up_file']['tmp_name']);
 				$total_reg = count($lineas);
-               			//log_message('error','[C] count lineas: '.count($lineas));
-				if($total_reg < 100){ 
-					for($i = 0; $i < $total_reg; $i++){
-               					//log_message('error','[C] lineas: '.print_r($lineas, true)); 
-						$separa = explode(";", $lineas[$i]);
-						if(count($separa) == 4){
-							$reg_bueno ++;
-							$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
-						}
-						else{
-							$reg_malo ++;	
-						}
-			
+				for($i = 0; $i < $total_reg; $i++){
+					$separa = explode(";", $lineas[$i]);
+					if(count($separa) == 4){
+						$reg_bueno ++;
+						$registro = '(';
+						$registro .= implode(',', $separa);
+						$registro .= ')';
 					}
-					$this->m_aplicacion->almacenaRegistro($registro);
-				}
-				else{
-					$j = 0;
-					while($i < $total_reg){
-                                        	$separa = explode(";", $lineas[$i]);
-                                                if(count($separa) == 4){
-                                                	$reg_bueno ++;
-                                                       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
-                                                }
-                                                else{
-                                                       	$reg_malo ++;
-                                                }
-						//igualar contadores
+					else{
+						$reg_malo ++;	
 					}
 				}
 				$salida = 'Regstros insertados: '.$reg_bueno."\n";
 				$salida .= 'Registros con error: '.$reg_malo;
-               			//log_message('error','[C] texto: '.print_r($registro, true)); 
-				//$salida .= print_r($texto);
+				$salida .= print_r($registro);
 			}
 			else
 				$salida = 'Tipo archivo no soportado';
