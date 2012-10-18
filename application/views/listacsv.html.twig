@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-	Archivo TXT</br>
+	
 	<input type="hidden" id="site_url" name="site_url" value="{{ url }}"/>
 	<form id="frm_file" name="frm_file" method="post" action="" enctype="multipart/form-data" >
-		{{ upload }}
+		Descripci&oacute;n: <input type="text" id="ipt_descrip" name="ipt_descrip" value="" /></br>	
+		Fecha Inicio Campa&ntilde;a: <input type="text" id="fecha_inicio" name="fecha_inicio" value="" /></br>	
+		Archivo (txt / csv): {{ upload }}
 	</form>
 	<!--<input type="button" id="btn_envio" name="btn_envio" value="Enviar" onclick="enviaFile()"/>-->
 	<a href="{{ url }}/plantilla_txt">Descargar Plantilla</a></p>	

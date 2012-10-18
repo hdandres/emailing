@@ -1322,3 +1322,6 @@ ERROR - 2012-10-18 16:19:00 --> [C] nuevo: ('11111111-1','Juan Perez','jperez@gm
 '),('22222222-2','andres fernandez','afernandez@gmail.com','datos dos
 '),('33333333-3','gabo chavez','gchavez@gmail.com','van tres
 ')
+ERROR - 2012-10-18 18:34:26 --> Query error: Cannot add or update a child row: a foreign key constraint fails (`emailing`.`lista_correo`, CONSTRAINT `fk_lista_correo_origen_lista1` FOREIGN KEY (`origen_lista_id_origen`) REFERENCES `origen_lista` (`id_origen`) ON DELETE NO ACTION ON UPDATE NO ACTION)
+ERROR - 2012-10-18 18:48:21 --> Query error: Column count doesn't match value count at row 1
+ERROR - 2012-10-18 18:49:03 --> Query error: Column count doesn't match value count at row 1

@@ -44,8 +44,8 @@ class Emailing extends CI_Controller {
 				case 'lista_correo':
 					$this->listaCorreoCsv($uri2);
 					break;	
-				case 'recibe_file':
-					$this->recibeFile();
+				case 'cliente':
+					$this->leeCliente();
 					break;
 				case 'show_rec':
 					$this->muestraRegistro($uri2);
@@ -122,7 +122,11 @@ class Emailing extends CI_Controller {
 	function listaCorreoCsv($enviado = null)
 	{
 		if($enviado){
-			$mensaje = $this->procesaArchivo();
+			$graba_version = $this->m_aplicacion->grabaVersion();
+			if($graba_version) 
+				$mensaje = $this->procesaArchivo();
+			else
+				$mensaje = 'Error tabla Versión'; 
 			//log_message('error','[C] files: '.print_r($_FILES, true));
 		}
 		else
@@ -166,7 +170,7 @@ class Emailing extends CI_Controller {
 						$separa = explode(";", $lineas[$i]);
 						if(count($separa) == 4){
 							$reg_bueno ++;
-							$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
+							$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1)";
                                                 	       /*	$registro[] = array(
 											'rut'	=> $separa[0],
 											'nombre' => $separa[1],
@@ -191,7 +195,7 @@ class Emailing extends CI_Controller {
                                         		$separa = explode(";", $lineas[$i]);
                                                 	if(count($separa) == 4){
                                                 		$reg_bueno ++;
-                                                	       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
+                                                	       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1)";
                                                 	}
                                                 	else
                                                 	       	$reg_malo ++;
@@ -205,7 +209,7 @@ class Emailing extends CI_Controller {
 							$separa = explode(";", $lineas[$i]);
 							if(count($separa) == 4){
 								$reg_bueno ++;
-								$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
+								$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1)";
 							}
 							else
 								$reg_malo ++;
@@ -238,6 +242,15 @@ class Emailing extends CI_Controller {
 		$this->twig->render('descarga_plantilla.html', array('descarga' => force_download('plantilla.txt', $datos)));
 	}
 	// fin bloque opción lista_correo
+
+        /*
+        * Bloque opción cliente 
+        * Funciones: leeCliente 
+        */
+	function leeCliente()
+	{
+		;	
+	}
 
 	function portalHome()
 	{
