@@ -114,13 +114,11 @@ class Emailing extends CI_Controller {
 
 	// fin bloque Login
 	
-	function portalHome()
-	{
-		$array_parser = array('url'  => $this->url_site.$this->url_base);
-					
-		$this->twig->render('inicio.html', $array_parser);
-	} 
 
+	/*
+	* Bloque opción lista_correo 
+	* Funciones: listaCorreoCsv - generaUpload - procesaArchivo - descargaPlantilla
+	*/
 	function listaCorreoCsv($enviado = null)
 	{
 		if($enviado){
@@ -130,14 +128,14 @@ class Emailing extends CI_Controller {
 		else
 			$mensaje = '';
                 $datos = array(
-                                'upload' => $this->genera_upload('up_file'),
+                                'upload' => $this->generaUpload('up_file'),
                                 'url' => $this->url_site.$this->url_base,
 				'mensaje' => $mensaje	
                         );
 		$this->twig->render('listacsv.html', $datos);
 	}
 
-        function genera_upload($nombre)
+        function generaUpload($nombre)
 	{
                 $data = array(
                         'id'    => $nombre,
@@ -152,48 +150,75 @@ class Emailing extends CI_Controller {
 		$salida = 'Error en la carga';
 		$reg_bueno = 0;
 		$reg_malo = 0;
+		$rango = 100;
                 $tipo = explode("/", $_FILES['up_file']['type']);
                 $ext  = substr($_FILES['up_file']['name'], -4);
-                //print_r($ext);die();
                 //log_message('error','[C] files: '.print_r($_FILES, true)); 
                 //log_message('error','[C] ext: '.$ext); 
 		if($ext == '.csv' || $ext == '.txt'){
-			if($tipo[1] == 'plain'){
+			if($tipo[1] == 'plain' || $tipo[1] == 'csv'){
 				$lineas = file($_FILES['up_file']['tmp_name']);
 				$total_reg = count($lineas);
                			//log_message('error','[C] count lineas: '.count($lineas));
-				if($total_reg < 100){ 
+				if($total_reg < $rango){ 
 					for($i = 0; $i < $total_reg; $i++){
                					//log_message('error','[C] lineas: '.print_r($lineas, true)); 
 						$separa = explode(";", $lineas[$i]);
 						if(count($separa) == 4){
 							$reg_bueno ++;
 							$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
+                                                	       /*	$registro[] = array(
+											'rut'	=> $separa[0],
+											'nombre' => $separa[1],
+											'correo' => $separa[2],
+											'observacion' => $separa[3]	
+										); */
 						}
 						else{
 							$reg_malo ++;	
 						}
 			
 					}
-					$this->m_aplicacion->almacenaRegistro($registro);
+					$nuevo_reg = implode(",", $registro);
+					$graba = $this->m_aplicacion->almacenaRegistro($nuevo_reg);
 				}
 				else{
+					$resto = ($total_reg % $rango);
+					$veces = (int) ($total_reg/$rango);
 					$j = 0;
-					while($i < $total_reg){
-                                        	$separa = explode(";", $lineas[$i]);
-                                                if(count($separa) == 4){
-                                                	$reg_bueno ++;
-                                                       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
-                                                }
-                                                else{
-                                                       	$reg_malo ++;
-                                                }
-						//igualar contadores
+					while($j < $veces){
+						for($i = ($j * $rango); $i < (($j+1)*100); $i++){
+                                        		$separa = explode(";", $lineas[$i]);
+                                                	if(count($separa) == 4){
+                                                		$reg_bueno ++;
+                                                	       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
+                                                	}
+                                                	else
+                                                	       	$reg_malo ++;
+						}
+						$j++;
+						$nuevo_reg = implode(",", $registro);
+						$graba = $this->m_aplicacion->almacenaRegistro($nuevo_reg);
+					}
+					if($resto > 0){
+						for($i = ($j * $rango); $i < $total_reg; $i++){
+							$separa = explode(";", $lineas[$i]);
+							if(count($separa) == 4){
+								$reg_bueno ++;
+								$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."')";
+							}
+							else
+								$reg_malo ++;
+						}
+						$nuevo_reg = implode(",", $registro);		
+						$graba = $this->m_aplicacion->almacenaRegistro($nuevo_reg);
 					}
 				}
-				$salida = 'Regstros insertados: '.$reg_bueno."\n";
+				$salida = 'Regstros insertados: '.$reg_bueno."</br>";
 				$salida .= 'Registros con error: '.$reg_malo;
                			//log_message('error','[C] texto: '.print_r($registro, true)); 
+				//$nuevo_reg = implode(",", $registro);
+               			//log_message('error','[C] nuevo: '.print_r($nuevo_reg, true)); 
 				//$salida .= print_r($texto);
 			}
 			else
@@ -212,6 +237,14 @@ class Emailing extends CI_Controller {
 		$datos = file_get_contents("data/plantilla.txt");
 		$this->twig->render('descarga_plantilla.html', array('descarga' => force_download('plantilla.txt', $datos)));
 	}
+	// fin bloque opción lista_correo
+
+	function portalHome()
+	{
+		$array_parser = array('url'  => $this->url_site.$this->url_base);
+					
+		$this->twig->render('inicio.html', $array_parser);
+	} 
 
 }
 /* Fin clase */

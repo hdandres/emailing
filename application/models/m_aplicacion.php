@@ -16,7 +16,17 @@ class M_aplicacion extends CI_Model{
                 $this->db->close();
                 return $result;
         }
-	
+
+	function almacenaRegistro($registro){
+		//log_message('error', 'datos_modelo: '.print_r($registro, true));
+                $this->load->database();
+		$result = $this->db->query("insert into lista_correo (rut, nombre, correo, observacion) VALUES ".$registro);
+		$this->db->close();
+                if($result == FALSE)
+                        return 0;
+                else
+                        return 1;
+	}		
 
   } //fin clase
 ?>
