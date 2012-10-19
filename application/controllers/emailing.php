@@ -122,9 +122,9 @@ class Emailing extends CI_Controller {
 	function listaCorreoCsv($enviado = null)
 	{
 		if($enviado){
-			$graba_version = $this->m_aplicacion->grabaVersion();
+			$graba_version = $this->m_aplicacion->grabaVersion(); //retorna id de insert a version_correo
 			if($graba_version) 
-				$mensaje = $this->procesaArchivo();
+				$mensaje = $this->procesaArchivo($graba_version);
 			else
 				$mensaje = 'Error tabla Versión'; 
 			//log_message('error','[C] files: '.print_r($_FILES, true));
@@ -150,7 +150,7 @@ class Emailing extends CI_Controller {
                 return form_upload($data);
         }
 
-        function procesaArchivo(){
+        function procesaArchivo($version){
 		$salida = 'Error en la carga';
 		$reg_bueno = 0;
 		$reg_malo = 0;
@@ -170,13 +170,7 @@ class Emailing extends CI_Controller {
 						$separa = explode(";", $lineas[$i]);
 						if(count($separa) == 4){
 							$reg_bueno ++;
-							$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1)";
-                                                	       /*	$registro[] = array(
-											'rut'	=> $separa[0],
-											'nombre' => $separa[1],
-											'correo' => $separa[2],
-											'observacion' => $separa[3]	
-										); */
+							$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1, ".$version.")";
 						}
 						else{
 							$reg_malo ++;	
@@ -195,7 +189,7 @@ class Emailing extends CI_Controller {
                                         		$separa = explode(";", $lineas[$i]);
                                                 	if(count($separa) == 4){
                                                 		$reg_bueno ++;
-                                                	       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1)";
+                                                	       	$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1, ".$version.")";
                                                 	}
                                                 	else
                                                 	       	$reg_malo ++;
@@ -209,7 +203,7 @@ class Emailing extends CI_Controller {
 							$separa = explode(";", $lineas[$i]);
 							if(count($separa) == 4){
 								$reg_bueno ++;
-								$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1)";
+								$registro[] = "('".$separa[0]."','".$separa[1]."','".$separa[2]."','".$separa[3]."', 1, ".$version.")";
 							}
 							else
 								$reg_malo ++;
