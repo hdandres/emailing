@@ -47,6 +47,15 @@ class Emailing extends CI_Controller {
 				case 'cliente':
 					$this->leeCliente();
 					break;
+				case 'carga_cliente':
+					$this->cargaCliente();
+					break;
+				case 'suscrito':
+					$this->leeSuscrito();
+					break;
+				case 'carga_suscrito':
+					$this->cargaSuscrito();
+					break;
 				case 'show_rec':
 					$this->muestraRegistro($uri2);
 					break;
@@ -239,13 +248,52 @@ class Emailing extends CI_Controller {
 
         /*
         * Bloque opción cliente 
-        * Funciones: leeCliente 
+        * Funciones: leeCliente - cargaCliente 
         */
 	function leeCliente()
 	{
-		;	
+		//$registrosClte = $this->m_aplicacion->getClienteTotal();
+		//print_r($registrosClte);
+		//$registrosProd = $this->m_aplicacion->getProdTotal();
+		$array_parser = array(
+				'url'  		 => $this->url_site.$this->url_base,
+				//'datos_clte'	=> $registrosClte,
+				//'datos_prod'	=> $registrosProd 
+				);
+
+		$this->twig->render('cltepcfactory.html', $array_parser);
 	}
 
+	function cargaCliente(){
+		$this->m_aplicacion->vaciarCliente();
+		exec('php -f /var/www/pasocliente.php', $resp);
+		$this->m_aplicacion->generaLlave();
+		//$this->m_aplicacion->generaLlave();
+		$this->output->set_output($resp[0]);	
+	}	
+	// fin bloque opción lista_correo
+
+        /*
+        * Bloque opción suscrito 
+        * Funciones: leeSuscrito - cargaSuscrito 
+        */
+	function leeSuscrito()
+	{
+                $array_parser = array(
+                                'url'	=> $this->url_site.$this->url_base
+                                );
+
+                $this->twig->render('suscritopcfactory.html', $array_parser);
+	}
+
+        function cargaSuscrito(){
+                $this->m_aplicacion->vaciarSuscrito();
+                exec('php -f /var/www/cargasuscriptor.php', $resp);
+                $this->m_aplicacion->llaveSuscrito();
+                //$this->m_aplicacion->generaLlave();
+                $this->output->set_output($resp[0]);
+        }
+	
 	function portalHome()
 	{
 		$array_parser = array('url'  => $this->url_site.$this->url_base);

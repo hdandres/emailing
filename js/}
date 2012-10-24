@@ -31,7 +31,7 @@ function cargaCliente(){
 
 }
 
-function cargaSuscrito(){
+function cargaCliente(){
 
         $('#loader').css("display", "");
         $('#div_boton').css("display", "none");

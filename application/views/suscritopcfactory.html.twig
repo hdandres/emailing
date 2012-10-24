@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	
+	<input type="hidden" id="site_url" name="site_url" value="{{ url }}"/>
+	Para enviar Correos a lista de Suscritos debe actualizar registros.</br>
+	<!--<input type="button" id="btn_envio" name="btn_envio" value="Enviar" onclick="enviaFile()"/>-->
+	<div id="div_boton" style="display:block">
+		<input type="button" id="btn_envio" name="Actualizar" value="Actualizar" onclick="cargaSuscrito()"/>
+	</div>
+	<div id="loader" style="display:none">
+		Cargando datos...&nbsp;&nbsp; <img src="{{ url }}/images/cargando.gif" height="25" width="25">  
+	</div></br>
+{% endblock %}
